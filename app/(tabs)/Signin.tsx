@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { storeAuthToken, storeUserData } from "../../utils/authStorage";
 
 export default function SigninScreen() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function SigninScreen() {
     setIsLoading(true);
     
     try {
-      // Replace with your actual authentication API endpoint
+      // Make API request
       const response = await axios.post("http://localhost:3001/api/auth/signin", {
         email,
         password,
@@ -33,15 +34,27 @@ export default function SigninScreen() {
 
       console.log("Sign-in successful:", response.data);
       
-      // Store authentication token or user data in secure storage
-      // (You would use SecureStore or similar for this)
-      
-      // Navigate to main screen or dashboard
-      router.replace("/(tabs)/vote");
-      
-    } catch (error) {
+      // Store authentication token securely
+      if (response.data.token) {
+        await storeAuthToken(response.data.token);
+        
+        // If user data is also returned, store it
+        if (response.data.user) {
+          await storeUserData(response.data.user);
+        }
+        
+        // Navigate to main screen
+        router.replace("/");
+      } else {
+        setErrorMessage("Invalid response from server. Missing authentication token.");
+      }
+    } catch (error: any) {
       console.error("Sign-in error:", error);
-      setErrorMessage("Invalid email or password. Please try again.");
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage("Invalid email or password. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
