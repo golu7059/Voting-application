@@ -64,6 +64,24 @@ export default function HomeScreen() {
         <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>Create Voting Session</Text>
       </TouchableOpacity>
 
+      {/* My Events Button */}
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#9C27B0", // Purple color to differentiate
+          padding: 12,
+          borderRadius: 10,
+          width: "100%",
+          alignItems: "center",
+          marginBottom: 15,
+          flexDirection: "row",
+          justifyContent: "center",
+        }}
+        onPress={() => router.push("/my-events")}
+      >
+        <Ionicons name="calendar-outline" size={20} color="#fff" style={{ marginRight: 10 }} />
+        <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>My Events</Text>
+      </TouchableOpacity>
+
       {/* View Results */}
       <TouchableOpacity
         style={{
