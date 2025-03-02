@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -40,6 +39,7 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
       }}>
+      {/* Main visible tabs */}
       <Tabs.Screen
         name="index"
         options={{
@@ -47,53 +47,68 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
         }}
       />
+      
       <Tabs.Screen
-        name="explore"
+        name="scan-qr"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Scan QR',
+          tabBarIcon: ({ color }) => <Ionicons name="qr-code" size={28} color={color} />,
+          // Make the middle tab button stand out
+          tabBarIconStyle: {
+            width: 45,
+            height: 45,
+            backgroundColor: '#28A745',
+            borderRadius: 23,
+            marginBottom: 5,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }
         }}
+        // We'll need to create this file
       />
+      
       <Tabs.Screen
-        name="create-event"
-        options={{
-          title: "Create",
-          tabBarIcon: ({ color }) => <Ionicons name="add-circle" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="my-events"
-        options={{
-          title: "My Events",
-          tabBarIcon: ({ color }) => <Ionicons name="calendar" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="results"
-        options={{
-          title: "Results",
-          tabBarIcon: ({ color }) => <Ionicons name="bar-chart" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="Signin"
+        name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />,
         }}
       />
-      {/* Hidden screens */}
+      
+      {/* Hidden screens - these don't show in the bottom nav */}
+      <Tabs.Screen
+        name="create-event"
+        options={{ href: null }}
+      />
+      
+      <Tabs.Screen
+        name="my-events"
+        options={{ href: null }}
+      />
+      
+      <Tabs.Screen
+        name="results" 
+        options={{ href: null }}
+      />
+      
       <Tabs.Screen
         name="vote"
-        options={{
-          href: null,
-        }}
+        options={{ href: null }}
       />
+      
       <Tabs.Screen
         name="register"
-        options={{
-          href: null,
-        }}
+        options={{ href: null }}
+      />
+      
+      <Tabs.Screen
+        name="Signin"
+        options={{ href: null }}
+      />
+
+      <Tabs.Screen
+        name="edit-profile"
+        options={{ href: null }}
       />
     </Tabs>
   );
