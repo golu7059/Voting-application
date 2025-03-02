@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,9 +7,28 @@ import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { isAuthenticated } from '@/utils/useAuthProtection';
+import { useRouter } from 'expo-router';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Check if the user is authenticated when first loading the tab layout
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await isAuthenticated();
+      setAuthChecked(true);
+      
+      // Only redirect on the initial load, not for tabs that handle their own auth
+      if (!authenticated && router.canGoBack() === false) {
+        router.replace('/Signin');
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   return (
     <Tabs
@@ -53,7 +72,6 @@ export default function TabLayout() {
         options={{
           title: 'Scan QR',
           tabBarIcon: ({ color }) => <Ionicons name="qr-code" size={28} color={color} />,
-          // Make the middle tab button stand out
           tabBarIconStyle: {
             width: 45,
             height: 45,
@@ -64,7 +82,6 @@ export default function TabLayout() {
             justifyContent: 'center',
           }
         }}
-        // We'll need to create this file
       />
       
       <Tabs.Screen
@@ -75,7 +92,7 @@ export default function TabLayout() {
         }}
       />
       
-      {/* Hidden screens - these don't show in the bottom nav */}
+      {/* Hidden screens */}
       <Tabs.Screen
         name="create-event"
         options={{ href: null }}

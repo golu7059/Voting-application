@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Image,
   Alert
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -14,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { getAuthToken, clearAuthData, getUserData, storeUserData } from "../../utils/authStorage";
 import { API_BASE_URL } from "../../utils/apiConfig";
+import AuthProtectedScreen from "../../components/AuthProtectedScreen";
 
 interface UserProfile {
   _id: string;
@@ -33,6 +33,34 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Use the AuthProtectedScreen component to ensure authentication
+  return (
+    <AuthProtectedScreen>
+      <ProfileContent 
+        profile={profile}
+        setProfile={setProfile}
+        loading={loading}
+        setLoading={setLoading}
+        error={error}
+        setError={setError}
+      />
+    </AuthProtectedScreen>
+  );
+}
+
+// Separate component for the profile content
+interface ProfileContentProps {
+  profile: UserProfile | null;
+  setProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+function ProfileContent({ profile, setProfile, loading, setLoading, error, setError }: ProfileContentProps) {
+  const router = useRouter();
 
   useEffect(() => {
     fetchUserProfile();
