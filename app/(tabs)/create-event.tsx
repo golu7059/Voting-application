@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAuthToken } from "../../utils/authStorage";
 import QRCode from 'react-native-qrcode-svg';
 import * as Clipboard from 'expo-clipboard';
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface Option {
   name: string;
@@ -115,7 +116,7 @@ export default function CreateEventScreen() {
       
       // Make API request
       const response = await axios.post(
-        "http://127.0.0.1:3001/api/event/create/",
+        `${API_BASE_URL}/event/create/`,
         eventData,
         {
           headers: {
