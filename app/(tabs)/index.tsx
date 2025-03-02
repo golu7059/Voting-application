@@ -58,7 +58,7 @@ export default function HomeScreen() {
           flexDirection: "row",
           justifyContent: "center",
         }}
-        onPress={() => router.push("/create-session")}
+        onPress={() => router.push("/create-event")}
       >
         <Ionicons name="add-circle-outline" size={20} color="#fff" style={{ marginRight: 10 }} />
         <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>Create Voting Session</Text>
@@ -75,7 +75,7 @@ export default function HomeScreen() {
           flexDirection: "row",
           justifyContent: "center",
         }}
-        onPress={() => router.push("/results")}
+        onPress={() => router.push(`/results?session=${sessionCode}`)}
       >
         <Ionicons name="bar-chart-outline" size={20} color="#fff" style={{ marginRight: 10 }} />
         <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>View Results</Text>
