@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import { API_BASE_URL } from "../../utils/apiConfig";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -82,7 +83,7 @@ export default function RegisterScreen() {
       // Format date in YYYY-MM-DD format for API
       const formattedDateOfBirth = formatDateForDisplay(dateOfBirth);
       
-      const response = await axios.post("http://127.0.0.1:3001/api/auth/signup/", {
+      const response = await axios.post(`${API_BASE_URL}/auth/signup/`, {
         email,
         password,
         firstName,

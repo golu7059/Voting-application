@@ -17,6 +17,7 @@ import axios from "axios";
 import { getAuthToken } from "../../utils/authStorage";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface Voter {
   _id: string;
@@ -44,17 +45,34 @@ interface EventStats {
 
 export default function ResultsScreen() {
   const router = useRouter();
-  const { session } = useLocalSearchParams();
-  const [eventId, setEventId] = useState<string | null>(session as string || null);
+  const params = useLocalSearchParams();
+  const sessionParam = params.session as string;
+  
+  // Reset all state values when the component mounts or session changes
+  const [eventId, setEventId] = useState<string | null>(null);
   const [eventStats, setEventStats] = useState<EventStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inputEventId, setInputEventId] = useState("");
   const [totalVotes, setTotalVotes] = useState(0);
 
+  // Reset and update eventId when session param changes
+  useEffect(() => {
+    console.log("Session parameter changed to:", sessionParam);
+    
+    // Reset state
+    setEventStats(null);
+    setError(null);
+    setTotalVotes(0);
+    
+    // Update eventId with the new session
+    setEventId(sessionParam || null);
+  }, [sessionParam]);
+
   // Fetch event stats when eventId changes
   useEffect(() => {
     if (eventId) {
+      console.log("Fetching stats for event ID:", eventId);
       fetchEventStats();
     }
   }, [eventId]);
@@ -64,8 +82,11 @@ export default function ResultsScreen() {
 
     setLoading(true);
     setError(null);
-
+    
     try {
+      // Log to help debug
+      console.log("Fetching stats from API for event:", eventId);
+      
       const token = await getAuthToken();
       
       if (!token) {
@@ -74,13 +95,13 @@ export default function ResultsScreen() {
         return;
       }
 
-      const response = await axios.get(`http://127.0.0.1:3001/api/event/${eventId}/stats/`, {
+      const response = await axios.get(`${API_BASE_URL}/event/${eventId}/stats/`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
-      console.log("Event stats:", response.data);
+      console.log("Event stats response:", response.data);
 
       if (response.data && response.data.event) {
         setEventStats(response.data.event);

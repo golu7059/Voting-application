@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { storeAuthToken, storeUserData } from "../../utils/authStorage";
+import { API_BASE_URL } from "../../utils/apiConfig";
 
 export default function SigninScreen() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function SigninScreen() {
     
     try {
       // Make API request
-      const response = await axios.post("http://localhost:3001/api/auth/signin", {
+      const response = await axios.post(`${API_BASE_URL}/auth/signin`, {
         email,
         password,
       });

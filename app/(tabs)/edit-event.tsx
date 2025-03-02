@@ -13,6 +13,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { getAuthToken } from "../../utils/authStorage";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface Option {
   name: string;
@@ -65,7 +66,7 @@ export default function EditEventScreen() {
         return;
       }
 
-      const response = await axios.get(`http://127.0.0.1:3001/api/event/${eventId}/`, {
+      const response = await axios.get(`${API_BASE_URL}/event/${eventId}/`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -139,7 +140,7 @@ export default function EditEventScreen() {
 
       // The API call returns the success message we've seen
       const response = await axios.put(
-        `http://127.0.0.1:3001/api/event/${eventId}/edit/`,
+        `${API_BASE_URL}/event/${eventId}/edit/`,
         eventData,
         {
           headers: {

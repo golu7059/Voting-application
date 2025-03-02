@@ -20,6 +20,7 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { getAuthToken } from "../../utils/authStorage";
 import * as ScreenOrientation from 'expo-screen-orientation';
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface Option {
   name: string;
@@ -81,7 +82,7 @@ export default function VoteScreen() {
       }
       
       // Make API request with stored token
-      const response = await axios.get(`http://127.0.0.1:3001/api/event/${eventId}/`, {
+      const response = await axios.get(`${API_BASE_URL}/event/${eventId}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -283,7 +284,7 @@ export default function VoteScreen() {
       }
       
       await axios.post(
-        `http://127.0.0.1:3001/api/event/${eventId}/vote/`,
+        `${API_BASE_URL}/event/${eventId}/vote/`,
         { optionName: selectedOption },
         {
           headers: {

@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { getAuthToken } from "../../utils/authStorage";
+import { API_BASE_URL } from "../../utils/apiConfig";
 
 interface Option {
   name: string;
@@ -54,7 +55,7 @@ export default function MyEventsScreen() {
         return;
       }
 
-      const response = await axios.get("http://127.0.0.1:3001/api/event/", {
+      const response = await axios.get(`${API_BASE_URL}/event/`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -85,12 +86,21 @@ export default function MyEventsScreen() {
   };
 
   const handleViewStats = (eventId: string) => {
-    router.push(`/results?session=${eventId}`);
+    console.log("Navigating to stats for event ID:", eventId);
+    
+    // Use the object form of navigation to ensure parameters are passed correctly
+    router.push({
+      pathname: "/results",
+      params: { session: eventId }
+    });
   };
 
   const handleEditEvent = (eventId: string) => {
-    router.push(`/edit-event?eventId=${eventId}`);
-    // Note: You'll need to create an edit-event screen
+    // Similarly update this to use object notation for consistency
+    router.push({
+      pathname: "/edit-event",
+      params: { eventId }
+    });
   };
 
   const handleDeleteEvent = async (eventId: string, title: string) => {
@@ -114,7 +124,7 @@ export default function MyEventsScreen() {
               }
 
               // Fixed API endpoint URL - removed the /delete suffix
-              const response = await axios.delete(`http://127.0.0.1:3001/api/event/${eventId}`, {
+              const response = await axios.delete(`${API_BASE_URL}/event/${eventId}`, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
