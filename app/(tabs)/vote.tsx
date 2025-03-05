@@ -294,7 +294,34 @@ export default function VoteScreen() {
         }
       );
       
-      setShowConfirmation(true);
+      // Show confirmation with certificate option
+      Alert.alert(
+        "Success",
+        "Your vote has been submitted successfully!",
+        [
+          {
+            text: "View Certificate",
+            onPress: () => {
+              setSecureVotingMode(false); // Exit secure mode
+              console.log("Redirecting to certificate with eventId:", eventId);
+              router.push({
+                pathname: "/certificate",
+                params: { eventId } // Use eventId parameter name consistently
+              });
+            }
+          },
+          {
+            text: "View Results",
+            onPress: () => {
+              setSecureVotingMode(false); // Exit secure mode
+              router.push({
+                pathname: "/results",
+                params: { session: eventId }
+              });
+            }
+          }
+        ]
+      );
       
       // Refresh event data to get updated vote counts
       fetchEventData();
@@ -407,9 +434,32 @@ export default function VoteScreen() {
           <Text style={styles.confirmText}>
             You have successfully voted for {selectedOption} in the {eventData?.title} event.
           </Text>
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmationClose}>
-            <Text style={styles.confirmButtonText}>Done</Text>
-          </TouchableOpacity>
+          
+          <View style={styles.confirmButtonGroup}>
+            <TouchableOpacity 
+              style={[styles.groupConfirmButton, styles.certificateButton]}
+              onPress={() => {
+                setShowConfirmation(false);
+                setSelectedOption(null);
+                setShowCandidates(false);
+                setSecureVotingMode(false);
+                router.push({
+                  pathname: "/certificate",
+                  params: { eventId }
+                });
+              }}
+            >
+              <Ionicons name="ribbon-outline" size={18} color="#fff" />
+              <Text style={styles.confirmButtonText}>Certificate</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.groupConfirmButton} 
+              onPress={handleConfirmationClose}
+            >
+              <Text style={styles.confirmButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -808,11 +858,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 10,
   },
-  confirmButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  // confirmButtonText moved below with additional marginLeft property
   alreadyVotedContainer: {
     flex: 1,
     justifyContent: "center",
@@ -977,5 +1023,31 @@ const styles = StyleSheet.create({
   featureText: {
     color: "#ddd",
     fontSize: 14,
+  },
+  confirmButtonGroup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 10,
+  },
+  groupConfirmButton: {
+    backgroundColor: "#28A745",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    flex: 1,
+    marginHorizontal: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  certificateButton: {
+    backgroundColor: "#FF9800",
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 5,
   },
 });

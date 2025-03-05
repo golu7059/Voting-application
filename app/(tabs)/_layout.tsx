@@ -127,6 +127,31 @@ export default function TabLayout() {
         name="edit-profile"
         options={{ href: null }}
       />
+
+      <Tabs.Screen
+        name="explore"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="edit-event"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="session-share"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="create-session"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="participated-events"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="certificate"
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }
