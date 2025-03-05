@@ -128,9 +128,6 @@ export default function TabLayout() {
         options={{ href: null }}
       />
 
-
-
-
       <Tabs.Screen
         name="explore"
         options={{ href: null }}
@@ -145,6 +142,14 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="create-session"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="participated-events"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="certificate"
         options={{ href: null }}
       />
     </Tabs>
