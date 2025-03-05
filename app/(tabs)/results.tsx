@@ -9,7 +9,8 @@ import {
   TextInput,
   Alert,
   Share,
-  Platform
+  Platform,
+  Modal
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,7 +18,9 @@ import axios from "axios";
 import { getAuthToken } from "../../utils/authStorage";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as Clipboard from 'expo-clipboard';
 import { API_BASE_URL } from "@/utils/apiConfig";
+import QRCode from 'react-native-qrcode-svg';
 
 interface Voter {
   _id: string;
@@ -55,6 +58,9 @@ export default function ResultsScreen() {
   const [error, setError] = useState<string | null>(null);
   const [inputEventId, setInputEventId] = useState("");
   const [totalVotes, setTotalVotes] = useState(0);
+  
+  // New state for QR code modal
+  const [isQRModalVisible, setIsQRModalVisible] = useState(false);
 
   // Reset and update eventId when session param changes
   useEffect(() => {
@@ -279,6 +285,19 @@ export default function ResultsScreen() {
     }
   };
 
+  // Copy event ID to clipboard
+  const handleCopyEventId = async () => {
+    if (eventId) {
+      await Clipboard.setStringAsync(eventId);
+      Alert.alert("Copied", "Event ID copied to clipboard");
+    }
+  };
+
+  // Toggle QR code modal
+  const toggleQRModal = () => {
+    setIsQRModalVisible(!isQRModalVisible);
+  };
+
   // Render loading state
   if (loading) {
     return (
@@ -403,14 +422,82 @@ export default function ResultsScreen() {
         )}
       </View>
 
-      {/* Event ID and Share */}
+      {/* Event ID and Actions */}
       <View style={styles.eventIdContainer}>
         <Text style={styles.eventIdLabel}>Event ID: </Text>
         <Text style={styles.eventId}>{eventStats.eventId}</Text>
-        <TouchableOpacity style={styles.shareButton}>
-          <Ionicons name="share-social-outline" size={20} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.eventIdActions}>
+          <TouchableOpacity style={styles.iconButton} onPress={handleCopyEventId}>
+            <Ionicons name="copy-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={toggleQRModal}>
+            <Ionicons name="qr-code-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.shareButton}>
+            <Ionicons name="share-social-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* QR Code Modal - Updated to match create-event style */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isQRModalVisible}
+        onRequestClose={toggleQRModal}
+      >
+        <View style={styles.successContainer}>
+          <Text style={styles.successTitle}>Event QR Code</Text>
+          
+          {/* Main content centered */}
+          <View style={styles.successContent}>
+            {/* QR Code centered */}
+            <View style={styles.qrContainer}>
+              <View style={styles.qrBackground}>
+                <QRCode
+                  value={`http://localhost:8081/vote?session=${eventStats?.eventId || eventId}`}
+                  size={250}
+                  backgroundColor="white"
+                  color="black"
+                />
+              </View>
+            </View>
+            
+            {/* Event ID directly below QR code */}
+            <View style={styles.eventIdBox}>
+              <Text style={styles.eventIdTitle}>Event ID</Text>
+              <Text style={styles.eventId}>{eventStats?.eventId || eventId}</Text>
+            </View>
+            
+            {/* Copy button */}
+            <TouchableOpacity style={styles.copyButton} onPress={handleCopyEventId}>
+              <Ionicons name="copy-outline" size={20} color="#fff" />
+              <Text style={styles.copyButtonText}>Copy Event ID</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Action buttons at bottom */}
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity style={styles.shareButton} onPress={() => {
+              Share.share({
+                message: `Join my voting event! Use this code: ${eventStats?.eventId || eventId}`,
+              });
+            }}>
+              <Ionicons name="share-outline" size={20} color="#fff" />
+              <Text style={styles.actionButtonText}>Share</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.closeButton} onPress={toggleQRModal}>
+              <Ionicons name="close-outline" size={20} color="#fff" />
+              <Text style={styles.actionButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <Text style={styles.helpText}>
+            Share this code or QR with participants to allow them to join your voting event
+          </Text>
+        </View>
+      </Modal>
 
       {/* Export Button */}
       <TouchableOpacity 
@@ -622,6 +709,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flex: 1,
   },
+  eventIdActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconButton: {
+    padding: 8,
+    backgroundColor: "#555",
+    borderRadius: 5,
+    marginRight: 8,
+  },
   shareButton: {
     padding: 8,
     backgroundColor: "#4da6ff",
@@ -641,5 +738,141 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 8,
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "#292929",
+    borderRadius: 15,
+    padding: 20,
+    width: "85%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#aaa",
+    marginBottom: 20,
+  },
+  qrContainer: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  eventIdText: {
+    color: "#28A745",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  modalCloseButton: {
+    backgroundColor: "#6c757d",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  modalCloseButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  // Updated and new styles for the QR modal to match create-event
+  successContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "space-between", // Distributes content
+  },
+  successTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 30,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  successContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  qrBackground: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    // Shadow for the QR code container
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  eventIdBox: {
+    alignItems: "center",
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: "#292929",
+    borderRadius: 10,
+    width: "100%",
+  },
+  eventIdTitle: {
+    color: "#aaa",
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  copyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4da6ff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 40,
+  },
+  copyButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  actionButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: "#6c757d",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 10,
+    flex: 1,
+    marginLeft: 10,
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  helpText: {
+    color: "#aaa",
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 20,
   },
 });
