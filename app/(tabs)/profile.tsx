@@ -231,23 +231,6 @@ function ProfileContent({ profile, setProfile, loading, setLoading, error, setEr
           <Text style={styles.actionButtonText}>Edit Profile</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: "#9C27B0" }]} 
-          onPress={() => router.push('/my-events')}
-        >
-          <Ionicons name="calendar-outline" size={20} color="#fff" />
-          <Text style={styles.actionButtonText}>My Created Events</Text>
-        </TouchableOpacity>
-        
-        {/* NEW: Participated Events Button */}
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: "#FF9800" }]} 
-          onPress={() => router.push('/participated-events')}
-        >
-          <Ionicons name="checkbox-outline" size={20} color="#fff" />
-          <Text style={styles.actionButtonText}>Events I Participated In</Text>
-        </TouchableOpacity>
-        
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color="#fff" />
           <Text style={styles.logoutButtonText}>Logout</Text>

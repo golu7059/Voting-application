@@ -196,11 +196,11 @@ export default function RegisterScreen() {
       {/* Gender Picker */}
       <View style={{ marginBottom: 15 }}>
         <Text style={{ color: "#fff", marginBottom: 8, fontSize: 16 }}>Gender</Text>
-        <View style={{ backgroundColor: "#333", borderRadius: 10, overflow: 'hidden' }}>
+        <View style={{ backgroundColor: "#333", borderRadius: 10, overflow: 'hidden', height: 30 }}>
           <Picker
             selectedValue={gender}
             onValueChange={(itemValue) => setGender(itemValue)}
-            style={{ color: "#fff", backgroundColor: "#333", width: "100%" }}
+            style={{ color: "#fff", backgroundColor: "#333", width: "100%", padding: 8, borderRadius: 10 }}
             dropdownIconColor="#fff"
           >
             <Picker.Item label="Male" value="Male" />
