@@ -517,7 +517,8 @@ export default function VoteScreen() {
         {secureVotingMode && (
           <View style={styles.secureInstructions}>
             <Text style={styles.secureInstructionsText}>
-              You are in secure voting mode. Please make your selection and submit your vote.
+              You are in secure voting mode. 
+              Please make your selection and submit your vote.
             </Text>
           </View>
         )}
@@ -561,7 +562,7 @@ export default function VoteScreen() {
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <Text style={styles.voteButtonText}>
-                Vote for {selectedOption}
+                Confirm Your Vote for {selectedOption}
               </Text>
             )}
           </TouchableOpacity>

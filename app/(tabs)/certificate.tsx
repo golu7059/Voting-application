@@ -292,13 +292,13 @@ export default function CertificatePage() {
           <Image source={{ uri: event.imageUrl }} style={styles.eventImage} resizeMode="contain" />
         )}
         
+        <Text style={styles.certIdText}>Certificate ID: {eventId}</Text>
         <Text style={styles.dateText}>Date: {currentDate}</Text>
       </View>
       
       {/* Certificate Footer */}
       <View style={styles.certificateFooter}>
         <Text style={styles.copyrightText}>© {new Date().getFullYear()} Voting App. All rights reserved.</Text>
-        <Text style={styles.certIdText}>Certificate ID: {eventId}</Text>
       </View>
     </View>
   );
